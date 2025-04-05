@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 
 import FormField from "./FormField";
 
@@ -23,6 +25,7 @@ const authSchema =(type:FormType) => {
   )}
 
 const AuthForm = ({type}:{type:FormType}) => {
+  const router= useRouter();
   const formSchema = authSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,10 +38,13 @@ const AuthForm = ({type}:{type:FormType}) => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     try{
       if(type === "sign-in") {
-        console.log("sign in", values);
+        toast.success("Sign in successful!");
+        router.push("/");
+
       }
       else {
-        console.log("sign up", values);
+        toast.success("Account created successfully!");
+        router.push("/sign-in");
       }
 
     }
@@ -60,7 +66,7 @@ const AuthForm = ({type}:{type:FormType}) => {
      
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full form mt-4 ">
-         {isSignIn && (<FormField
+         {!isSignIn && (<FormField
           control={form.control}
           name="name"
           placeholder="Enter your name"
